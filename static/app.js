@@ -48,6 +48,7 @@ const chartData = {
   }]
 }
 
+const charts = []
 const qosValuesRoot = []
 
 const getQOSButton = document.querySelector("#getQos")
@@ -76,7 +77,7 @@ socket.on("qos_status", function (msg) {
 })
 
 function updateChart(chartObjectIndex, dataset) {
-  let chartObject = Chart.instances[chartObjectIndex]
+  let chartObject = charts[chartObjectIndex]
   console.log(chartObject.data.datasets[0].data)
   try {
     chartObject.data.datasets[0].data.push(dataset[0]);
@@ -92,19 +93,36 @@ function updateChart(chartObjectIndex, dataset) {
 socket.on("qos_info", function (msg) {
   console.log(msg)
   let policyClasses = msg["policy_classes"]
+  let middleValue = policyClasses.length / 2
+  let col1 = []
+  let col2 = []
   for (let i = 0; i < policyClasses.length; i++) {
-    let row = `
-    <div>
-      <canvas id="chartIndex_${i}" width="500" height="300"></canvas>
-    </div>`
-    chartGrid.innerHTML += row
+    let row = `<canvas id="chartIndex_${i}" width="500" height="300"></canvas>`
+    if (i < middleValue) {
+      col1.push(row)
+    } else {
+      col2.push(row)
+    }
+    // chartGrid.innerHTML += row
   }
+  let joined = `
+  <div>
+    ${col1.join(" ")}
+  </div>
+  <div style="margin-left:5rem">
+    ${col2.join(" ")}
+  </div>
+  `
+  chartGrid.innerHTML += joined
   for (let i = 0; i < policyClasses.length; i++) {
     let getChartElementForPolicy = document.getElementById(`chartIndex_${i}`)
-    new Chart(getChartElementForPolicy.getContext('2d'), {
+    charts.push(new Chart(getChartElementForPolicy.getContext('2d'), {
       type: 'line',
       data: chartData,
       options: chartOptions
-    });
+    }));
+
+    // Adding title for the chart
+    charts[i].options.title.text = policyClasses[i]
   }
 })

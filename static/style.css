@@ -21,6 +21,10 @@ body {
   margin: 2rem;
 }
 
+#chart-grid {
+  display: flex;
+}
+
 h2 {
   color: #515bf0;
   font-size: 3rem;
