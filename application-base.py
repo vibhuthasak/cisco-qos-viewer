@@ -22,6 +22,7 @@ class QOSThread:
         self.telnet.write(b"en\n")
         self.telnet.read_until(b"Password:")
         self.telnet.write(self.password + b"\n")
+        self.telnet.read_until(b"#", timeout=1)
 
     def getServicePolicies(self):
         self.telnet.write(
@@ -31,13 +32,14 @@ class QOSThread:
         )
         service_policy = self.telnet.read_until(b"#").decode("utf-8")
         for l1 in service_policy.splitlines():
-            if "Service-policy input" in l1:
+            if "Service-policy input:" in l1:
                 self.input_policy = l1.split()[-1]
-            if "Service-policy output" in l1:
+            if "Service-policy output:" in l1:
                 self.output_policy = l1.split()[-1]
                 break
 
     def getChildPolicies(self):
+        self.telnet.read_until(b"#", timeout=1)
         self.telnet.write(
             b"sh policy-map interface "
             + self.interface
@@ -49,21 +51,34 @@ class QOSThread:
             finalElement = line.split()[-1]
             if finalElement == self.output_policy:
                 atInput = False
-            if atInput:
+            if (
+                (atInput)
+                and ("Service-policy" in line)
+                and (finalElement != self.input_policy)
+            ):
                 self.input_child_policies.append(finalElement)
-            else:
+            if (
+                (not atInput)
+                and ("Service-policy" in line)
+                and (finalElement != self.output_policy)
+            ):
                 self.output_child_policies.append(finalElement)
 
     def getClassMaps(self):
+        self.telnet.read_until(b"#", timeout=1)
         self.telnet.write(
-            b"sh policy-map interface " + self.interface + b" | include Class-map \n"
+            b"sh policy-map interface "
+            + self.interface
+            + b" | include Class-map"
+            + b"\n"
         )
         class_maps = self.telnet.read_until(b"#").decode("utf-8")
         class_maps_list = []
         for line in class_maps.splitlines():
-            secondElement = line.split()[-2]
+            if "Class-map:" in line:
+                secondElement = line.strip().split()[-2]
             class_maps_list.append(secondElement)
-        self.policy_classes = list(dict.fromkeys(class_maps_list))
+        self.policy_classes = class_maps_list
 
     # def getPoliceRate(self):
     #     self.telnet.write(b"sh run policy-map " + self.input_policy.encode() + b"\n")
