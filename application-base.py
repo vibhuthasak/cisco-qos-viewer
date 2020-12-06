@@ -4,9 +4,7 @@ from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
-socketio = SocketIO(
-    app, async_mode=None, ping_interval=100, ping_timeout=100, path="/qosSocketIO"
-)
+socketio = SocketIO(app)
 
 
 class QOSThread:

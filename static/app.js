@@ -1,4 +1,4 @@
-var socket = io("http://127.0.0.1:5000/", { path: '/qosSocketIO' });
+var socket = io("http://127.0.0.1:5000/");
 
 const getQOSButton = document.querySelector("#getQos")
 getQOSButton.addEventListener('click', function () {
@@ -7,5 +7,9 @@ getQOSButton.addEventListener('click', function () {
 })
 
 socket.on("test_response", function (msg) {
+  console.log(msg);
+})
+
+socket.on("connect_response", function (msg) {
   console.log(msg);
 })
