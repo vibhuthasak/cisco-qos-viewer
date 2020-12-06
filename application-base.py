@@ -101,6 +101,7 @@ class QOSThread:
                 offerrate = [int(s) for s in line.split() if s.isdigit()]
                 offer_rate_list.append(offerrate)
         print(offer_rate_list)
+        emit("qos_status", {"qos_values": offer_rate_list})
 
     def begin(self):
         self.loginToRouterAndEnable()
@@ -120,10 +121,21 @@ class QOSThread:
         print(self.output_child_policies)
         print("policy_classes:")
         print(self.policy_classes)
+        emit(
+            "qos_info",
+            {
+                "input-policy": self.input_policy,
+                "output-policy": self.output_policy,
+                "input_child_policies": self.input_child_policies,
+                "output_child_policies": self.output_child_policies,
+                "policy_classes": self.policy_classes,
+            },
+        )
         while True:
             self.getQos()
 
 
+@socketio.on("getQOS")
 def main():
     interfaceName = "FastEthernet0/1.100"
     interfaceUserPwd = "cisco"
