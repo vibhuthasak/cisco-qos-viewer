@@ -1,0 +1,65 @@
+{
+  "input-policy": "1M_GOLD_T1_POLICE_PARENT_TUNNEL",
+  "output-policy": "1M_GOLD_T1_SHAPE_PARENT_TUNNEL",
+  "input_child_policies": [
+    "GOLD_T1_POLICE_CHILD_TUNNEL"
+  ],
+  "output_child_policies": [
+    "GOLD_T1_SHAPE_CHILD_TUNNEL"
+  ],
+  "policy_classes": [
+    "class-default",
+    "VOICE",
+    "DATA_BC",
+    "class-default",
+    "class-default",
+    "VOICE",
+    "DATA_BC",
+    "class-default"
+  ]
+}
+
+{
+  "qos_values": [
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ]
+  ]
+}
