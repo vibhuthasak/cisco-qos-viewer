@@ -3,32 +3,56 @@ import telnetlib
 
 class QOSThread:
     def __init__(self, interface, password, hostip):
-        self.interface = interface
-        self.password = password
+        self.interface = interface.encode()
+        self.password = password.encode()
         self.telnet = telnetlib.Telnet(hostip)
 
         # Send varialbles
         self.input_policy = ""
         self.output_policy = ""
         self.police_rate = ""
-        self.input_policies = {}
-        self.output_policies = {}
-        self.input_policies_index = []
-        self.output_policies_index = []
+        self.input_child_policies = []
+        self.output_child_policies = []
+        self.policy_classes = []
 
-    def loginToRouter(self):
+    def loginToRouterAndEnable(self):
+        self.telnet.read_until(b"Password:")
+        self.telnet.write(self.password + b"\n")
+        self.telnet.read_until(b">")
+        self.telnet.write(b"en\n")
         self.telnet.read_until(b"Password:")
         self.telnet.write(self.password + b"\n")
 
     def getServicePolicies(self):
-        self.telnet.write(b"sh run int " + self.interface + b"\n")
-        service_policy = self.telnet.read_until(b"!").decode("utf-8")
+        self.telnet.write(
+            b"sh policy-map interface "
+            + self.interface
+            + b" | include output:|input: \n"
+        )
+        service_policy = self.telnet.read_until(b"#").decode("utf-8")
         for l1 in service_policy.splitlines():
-            if "service-policy input" in l1:
+            if "Service-policy input" in l1:
                 self.input_policy = l1.split()[-1]
-            if "service-policy output" in l1:
+            if "Service-policy output" in l1:
                 self.output_policy = l1.split()[-1]
                 break
+
+    def getChildPolicies(self):
+        self.telnet.write(
+            b"sh policy-map interface "
+            + self.interface
+            + b" | include Service-policy \n"
+        )
+        service_policy = self.telnet.read_until(b"#").decode("utf-8")
+        atInput = True
+        for line in service_policy.splitlines():
+            finalElement = line.split()[-1]
+            if finalElement == self.output_policy:
+                atInput = False
+            if atInput:
+                self.input_child_policies.append(finalElement)
+            else:
+                self.output_child_policies.append(finalElement)
 
     def getPoliceRate(self):
         self.telnet.write(b"sh run policy-map " + self.input_policy.encode() + b"\n")
