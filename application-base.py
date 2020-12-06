@@ -145,6 +145,12 @@ def disconnect():
     print(f"Client Disconnected {request.sid}")
 
 
+@socketio.on("testPath")
+def testPath():
+    print(f"Got test event")
+    emit("test_response", {"Status": 200})
+
+
 @app.route("/")
 def hello():
     return render_template("index.html")
