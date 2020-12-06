@@ -1,5 +1,6 @@
 {
   "python.pythonPath": "c:\\Users\\Vibhutha\\.conda\\envs\\flask\\python.exe",
   "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true
+  "python.linting.enabled": true,
+  "python.formatting.provider": "black"
 }
