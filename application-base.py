@@ -77,8 +77,24 @@ class QOSThread:
         for line in class_maps.splitlines():
             if "Class-map:" in line:
                 secondElement = line.strip().split()[-2]
-            class_maps_list.append(secondElement)
+                class_maps_list.append(secondElement)
         self.policy_classes = class_maps_list
+
+    def getQos(self):
+        self.telnet.read_until(b"#", timeout=1)
+        self.telnet.write(
+            b"sh policy-map interface "
+            + self.interface
+            + b" | include 30 second offered rate"
+            + b"\n"
+        )
+        offered_rates = self.telnet.read_until(b"#").decode("utf-8")
+        offer_rate_list = []
+        for line in offered_rates.splitlines():
+            if "30 second offered rate" in line:
+                offerrate = [int(s) for s in str.split() if s.isdigit()]
+                offer_rate_list.append(offerrate)
+        print(offer_rate_list)
 
     # def getPoliceRate(self):
     #     self.telnet.write(b"sh run policy-map " + self.input_policy.encode() + b"\n")
@@ -169,20 +185,28 @@ class QOSThread:
         self.getServicePolicies()
         self.getChildPolicies()
         self.getClassMaps()
+        self.getQos()
 
     def run(self):
         self.begin()
+        print("Input Policy:")
         print(self.input_policy)
+        print("Output Policy:")
         print(self.output_policy)
-        print(self.police_rate)
+        print("input_child_policies:")
         print(self.input_child_policies)
+        print("output_child_policies:")
         print(self.output_child_policies)
+        print("policy_classes:")
         print(self.policy_classes)
 
 
 def main():
     interfaceName = "FastEthernet0/1.100"
-    interfaceUserPwd = "dialog@123"
-    interfaceIp = "5.5.5.5"
+    interfaceUserPwd = "cisco"
+    interfaceIp = "5.5.5.2"
     thread = QOSThread(interfaceName, interfaceUserPwd, interfaceIp)
     thread.run()
+
+
+main()
