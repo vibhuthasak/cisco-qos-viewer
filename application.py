@@ -13,7 +13,7 @@ socketio = SocketIO(
 class QOSThread:
     def __init__(self, interface, userName, password):
         # super(QOSThread, self).__init__()
-        self.interface = interface.encode()
+        self.stringInterface = interface.encode()
         self.userName = userName.encode()
         self.password = password.encode()
         self.telnet = telnetlib.Telnet("localhost")
@@ -27,9 +27,7 @@ class QOSThread:
         self.output_policies = {}
         self.input_policies_index = []
         self.output_policies_index = []
-
-        self.stringInterface = interface
-
+        
     def loginToBe(self):
         emit(
             "qos_status", {"Status": 200, "Info": f"Logging to {self.stringInterface}"}
