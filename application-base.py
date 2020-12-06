@@ -1,4 +1,12 @@
 import telnetlib
+from flask import Flask, render_template, request
+from flask_socketio import SocketIO, emit
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "secret!"
+socketio = SocketIO(
+    app, async_mode=None, ping_interval=100, ping_timeout=100, path="/qosSocketIO"
+)
 
 
 class QOSThread:
@@ -126,4 +134,16 @@ def main():
     thread.run()
 
 
-main()
+@socketio.on("connect")
+def connect():
+    print(f"Client Connected {request.sid}")
+    emit("connect_response", {"Status": 200})
+
+
+@socketio.on("disconnect")
+def disconnect():
+    print(f"Client Disconnected {request.sid}")
+
+
+if __name__ == "__main__":
+    socketio.run(app)
