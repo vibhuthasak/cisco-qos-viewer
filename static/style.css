@@ -4,6 +4,24 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 62.5%;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 h2 {
-  color: green;
+  color: #515bf0;
+  font-size: 3rem;
+  margin: 2rem;
+}
+
+#getQos {
+  margin: 2rem;
+  padding: 1rem;
+  border: none;
+  background: coral;
 }
