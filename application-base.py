@@ -92,7 +92,7 @@ class QOSThread:
         offer_rate_list = []
         for line in offered_rates.splitlines():
             if "30 second offered rate" in line:
-                offerrate = [int(s) for s in str.split() if s.isdigit()]
+                offerrate = [int(s) for s in line.split() if s.isdigit()]
                 offer_rate_list.append(offerrate)
         print(offer_rate_list)
 
@@ -185,7 +185,6 @@ class QOSThread:
         self.getServicePolicies()
         self.getChildPolicies()
         self.getClassMaps()
-        self.getQos()
 
     def run(self):
         self.begin()
@@ -199,6 +198,8 @@ class QOSThread:
         print(self.output_child_policies)
         print("policy_classes:")
         print(self.policy_classes)
+        while True:
+            self.getQos()
 
 
 def main():
