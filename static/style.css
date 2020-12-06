@@ -13,14 +13,21 @@ body {
   height: 100%;
 }
 
-h2 {
-  color: #515bf0;
-  font-size: 3rem;
+.control-container {
   margin: 2rem;
 }
 
-#getQos {
+.chart-container {
   margin: 2rem;
+}
+
+h2 {
+  color: #515bf0;
+  font-size: 3rem;
+}
+
+#getQos {
+  margin-top: 2rem;
   padding: 1rem;
   border: none;
   background: coral;
