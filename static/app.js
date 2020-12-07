@@ -24,7 +24,9 @@ socket.on("qos_status", function (msg) {
   console.log(qosValues)
   // console.log(charts)
   for (let i = 0; i < qosValues.length; i++) {
-    updateChart(i, [qosValues[i][1], qosValues[i][2]])
+    let data1 = qosValues[i][1]
+    let data2 = qosValues[i][2]
+    updateChart(i, [data1 === 0 ? 0 : data1 / 1000, data2 === 0 ? 0 : data2 / 1000])
   }
   // console.log(charts)
 })
