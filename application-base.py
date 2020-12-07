@@ -1,6 +1,7 @@
 import telnetlib
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
+import sys
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
@@ -111,6 +112,7 @@ class QOSThread:
         self.getClassMaps()
 
     def run(self):
+
         self.begin()
         print("Input Policy:")
         print(self.input_policy)
@@ -137,12 +139,24 @@ class QOSThread:
 
 
 @socketio.on("getQOS")
-def main():
-    interfaceName = "FastEthernet0/1.100"
-    interfaceUserPwd = "cisco"
-    interfaceIp = "5.5.5.2"
-    thread = QOSThread(interfaceName, interfaceUserPwd, interfaceIp)
-    thread.run()
+def main(msg):
+    print(msg)
+    if (
+        (len(msg["interfaceName"]) < 1)
+        or (len(msg["interfaceIp"]) < 1)
+        or (len(msg["interfacePwd"]) < 1)
+    ):
+        emit("error_info", {"status": 400, "description": "Bad Request"})
+    else:
+        try:
+            interfaceName = msg["interfaceName"]
+            interfaceUserPwd = msg["interfacePwd"]
+            interfaceIp = msg["interfaceIp"]
+            print(interfaceName, interfaceUserPwd, interfaceIp)
+            thread = QOSThread(interfaceName, interfaceUserPwd, interfaceIp)
+            thread.run()
+        except:
+            emit("error_info", {"status": 500, "description": sys.exc_info()[0]})
 
 
 @socketio.on("connect")
