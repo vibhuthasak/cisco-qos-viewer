@@ -1,55 +1,6 @@
-var socket = io("http://127.0.0.1:5000/");
-
-const chartOptions = {
-  responsive: false,
-  maintainAspectRatio: true,
-  title: {
-    display: true,
-    text: "",
-    fontSize: 18,
-    fontColor: "Black"
-  },
-  legand: {
-    display: false
-  },
-  scales: {
-    yAxes: [{
-      ticks: {
-        beginAtZero: true,
-      },
-      gridLines: {
-        color: "black",
-        borderDash: [2, 5],
-      },
-      scaleLabel: {
-        display: true,
-        labelString: "kbps",
-        fontColor: "black"
-      }
-    }]
-  },
-  tooltips: {
-    enabled: false
-  }
-}
-
-const chartData = {
-  labels: [],
-  datasets: [{
-    label: "Matched",
-    borderColor: 'rgb(0, 0, 255)',
-    fill: false,
-    data: [],
-  }, {
-    label: "Dropped",
-    borderColor: 'rgb(255, 0, 0)',
-    fill: false,
-    data: [],
-  }]
-}
+const socket = io("http://127.0.0.1:5000/");
 
 const charts = []
-const qosValuesRoot = []
 
 const getQOSButton = document.querySelector("#getQos")
 const chartGrid = document.querySelector("#chart-grid")
@@ -67,26 +18,24 @@ socket.on("connect_response", function (msg) {
   console.log(msg);
 })
 
-// QOS status listner
+// QOS status listener
 socket.on("qos_status", function (msg) {
   let qosValues = msg["qos_values"]
   console.log(qosValues)
+  // console.log(charts)
   for (let i = 0; i < qosValues.length; i++) {
     updateChart(i, [qosValues[i][1], qosValues[i][2]])
   }
+  // console.log(charts)
 })
 
 function updateChart(chartObjectIndex, dataset) {
-  let chartObject = charts[chartObjectIndex]
-  console.log(chartObject.data.datasets[0].data)
-  try {
-    chartObject.data.datasets[0].data.push(dataset[0]);
-    chartObject.data.datasets[1].data.push(dataset[1]);
-    chartObject.data.labels = [...Array(chartObject.data.datasets[0].data.length).keys()]
-    chartObject.update();
-  } catch (e) {
-    console.log(e)
-  }
+  let chartObject = Chart.instances[chartObjectIndex]
+  console.log(chartObject)
+  chartObject.data.datasets[0].data.push(dataset[0]);
+  chartObject.data.datasets[1].data.push(dataset[1]);
+  chartObject.data.labels = [...Array(chartObject.data.datasets[0].data.length).keys()]
+  chartObject.update();
 }
 
 // QOS information listener
@@ -103,7 +52,6 @@ socket.on("qos_info", function (msg) {
     } else {
       col2.push(row)
     }
-    // chartGrid.innerHTML += row
   }
   let joined = `
   <div>
@@ -116,13 +64,59 @@ socket.on("qos_info", function (msg) {
   chartGrid.innerHTML += joined
   for (let i = 0; i < policyClasses.length; i++) {
     let getChartElementForPolicy = document.getElementById(`chartIndex_${i}`)
-    charts.push(new Chart(getChartElementForPolicy.getContext('2d'), {
+    let chartData = {
+      labels: [],
+      datasets: [{
+        label: "Matched",
+        borderColor: 'rgb(0, 0, 255)',
+        fill: false,
+        data: [],
+      }, {
+        label: "Dropped",
+        borderColor: 'rgb(255, 0, 0)',
+        fill: false,
+        data: [],
+      }]
+    }
+    let chartOptions = {
+      responsive: false,
+      maintainAspectRatio: true,
+      title: {
+        display: true,
+        text: "",
+        fontSize: 18,
+        fontColor: "Black"
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          },
+          gridLines: {
+            color: "black",
+            borderDash: [2, 5],
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "kbps",
+            fontColor: "black"
+          }
+        }]
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+    new Chart(getChartElementForPolicy.getContext('2d'), {
       type: 'line',
       data: chartData,
       options: chartOptions
-    }));
+    });
 
     // Adding title for the chart
-    charts[i].options.title.text = policyClasses[i]
+    Chart.instances[i].options.title.text = policyClasses[i]
   }
 })
