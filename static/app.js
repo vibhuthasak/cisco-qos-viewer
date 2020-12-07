@@ -44,6 +44,10 @@ function updateChart(chartObjectIndex, dataset) {
 socket.on("qos_info", function (msg) {
   console.log(msg)
   let policyClasses = msg["policy_classes"]
+  let inputPolicy = msg["input-policy"]
+  let inputChildPolicy = msg["input_child_policies"][0]
+  let outputPolicy = msg["output-policy"]
+  let outputChildPolicy = msg["output_child_policies"][0]
   let middleValue = policyClasses.length / 2
   let col1 = []
   let col2 = []
@@ -56,10 +60,14 @@ socket.on("qos_info", function (msg) {
     }
   }
   let joined = `
-  <div>
+  <div style="flex:1 1 auto; display: flex;flex-direction: column; align-items:center">
+    <h3 style="text-align:center; font-size:2rem">${inputPolicy}</h3>
+    <h3 style="text-align:center; font-size:2rem">${inputChildPolicy}</h3>
     ${col1.join(" ")}
   </div>
-  <div style="margin-left:5rem">
+  <div style="flex:1 1 auto; display: flex;flex-direction: column; align-items:center">
+    <h3 style="text-align:center; font-size:2rem">${outputPolicy}</h3>
+    <h3 style="text-align:center; font-size:2rem">${outputChildPolicy}</h3>
     ${col2.join(" ")}
   </div>
   `
@@ -90,7 +98,7 @@ socket.on("qos_info", function (msg) {
         fontColor: "Black"
       },
       legend: {
-        display: false
+        display: true
       },
       scales: {
         yAxes: [{

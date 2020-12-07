@@ -8,7 +8,6 @@ cd <directory>  cd /home/chamath/Desktop/cisco-qos/cisco-qos-viewer/
 
 https://docs.python.org/3/library/telnetlib.html
 
-"reerere"
 
 Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include output:|input:
   Service-policy input: 1M_SILVER_T1_POLICE_PARENT_TUNNEL_1
