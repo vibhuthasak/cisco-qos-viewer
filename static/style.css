@@ -29,10 +29,16 @@ h2 {
   color: #515bf0;
   font-size: 3rem;
 }
-
-#getQos {
+button {
   margin-top: 2rem;
   padding: 1rem;
   border: none;
-  background: coral;
+}
+
+#getQos {
+  background: rgb(1, 236, 72);
+}
+
+#stopQos {
+  background: rgb(250, 39, 1);
 }
