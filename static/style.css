@@ -26,19 +26,51 @@ body {
 }
 
 h2 {
-  color: #515bf0;
+  color: #000000;
   font-size: 3rem;
 }
-button {
+
+input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.controls {
   margin-top: 2rem;
-  padding: 1rem;
-  border: none;
 }
 
-#getQos {
-  background: rgb(1, 236, 72);
+.controls input {
+  position: absolute;
 }
 
-#stopQos {
-  background: rgb(250, 39, 1);
+.controls label {
+  outline: none;
+  user-select: none;
+  font-size: 1.5rem;
+  letter-spacing: 0.04rem;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  background-color: rgb(25, 187, 25);
+}
+
+.controls input:checked + label {
+  color: white;
+  background-color: rgb(213, 44, 44);
+}
+
+form {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+}
+
+form label {
+  font-size: 2rem;
+}
+
+form input {
+  font-size: 2rem;
 }

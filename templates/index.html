@@ -13,8 +13,17 @@
 <body>
   <div class="control-container">
     <h2>Cisco QOS Viewer</h2>
-    <button id="getQos">Get QOS</button>
-    <button id="stopQos">Stop QOS</button>
+    <form>
+      <label for="iname">Interface Name</label>
+      <input type="text" id="iname" name="iname">
+      <label for="iip">IP</label>
+      <input type="text" id="iip" name="iip">
+      <label for="ipassword">Password</label>
+      <input type="text" id="ipassword" name="ipassword">
+    </form>
+    <div class="controls">
+      <input type="checkbox" id="getQos" /><label id="getQosLabel" for="getQos">Start QOS</label>
+    </div>
   </div>
   <div class="chart-container">
     <div id="chart-grid">

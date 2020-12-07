@@ -3,11 +3,27 @@ const socket = io("http://127.0.0.1:5000/");
 const charts = []
 
 const getQOSButton = document.querySelector("#getQos")
+const getQOSLabel = document.querySelector("#getQosLabel")
 const chartGrid = document.querySelector("#chart-grid")
 
+const interfaceName = document.querySelector("#iname")
+const interfaceIp = document.querySelector("#iip")
+const interfacePwd = document.querySelector("#ipassword")
+
 getQOSButton.addEventListener('click', function () {
-  console.log("Hello World");
-  socket.emit("getQOS");
+  let qosValues = {
+    interfaceName: interfaceName.value,
+    interfaceIp: interfaceIp.value,
+    interfacePwd: interfacePwd.value
+  }
+  if (getQOSButton.checked) {
+    chartGrid.innerHTML = ""
+    socket.emit("getQOS", qosValues);
+    getQOSLabel.innerText = "Stop QOS"
+  } else {
+    console.log("Stop QOS")
+    getQOSLabel.innerText = "Start QOS"
+  }
 })
 
 socket.on("test_response", function (msg) {
@@ -132,4 +148,8 @@ socket.on("qos_info", function (msg) {
     // Adding title for the chart
     Chart.instances[i].options.title.text = policyClasses[i]
   }
+})
+
+socket.on("error_info", function (msg) {
+  alert(msg["description"])
 })
