@@ -102,6 +102,7 @@ class QOSThread:
                 offer_rate_list.append(offerrate)
         print(offer_rate_list)
         emit("qos_status", {"qos_values": offer_rate_list})
+        socketio.sleep(8)
 
     def begin(self):
         self.loginToRouterAndEnable()
