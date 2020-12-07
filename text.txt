@@ -1,0 +1,48 @@
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install git - Software version control.
+pip install flask-socketio - Make connection between backend and frontend
+
+cd <directory>  cd /home/chamath/Desktop/cisco-qos/cisco-qos-viewer/
+
+
+https://docs.python.org/3/library/telnetlib.html
+
+"reerere"
+
+Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include output:|input:
+  Service-policy input: 1M_SILVER_T1_POLICE_PARENT_TUNNEL_1
+  Service-policy output: 1M_SILVER_T1_SHAPE_PARENT_TUNNEL
+
+Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include Service-policy
+  Service-policy input: 1M_SILVER_T1_POLICE_PARENT_TUNNEL_1
+      Service-policy : SILVER_T1_POLICE_CHILD_TUNNEL_1
+  Service-policy output: 1M_SILVER_T1_SHAPE_PARENT_TUNNEL
+      Service-policy : SILVER_T1_SHAPE_CHILD_TUNNEL
+
+Kadawatha_BE#sh run policy-map SILVER_T1_SHAPE_CHILD_TUNNEL | include bandwidth|class
+ class DATA_BC
+  bandwidth percent 50
+ class class-default
+
+Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include Class-map     
+    Class-map: class-default (match-any)
+        Class-map: DATA_BC (match-any)
+        Class-map: class-default (match-any)
+    Class-map: class-default (match-any)
+        Class-map: DATA_BC (match-any)
+        Class-map: class-default (match-any)
+
+Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include burst
+          rate 1000000 bps, burst 31250 bytes
+              rate 500000 bps, burst 15625 bytes
+
+Kadawatha_BE#sh policy-map interface FastEthernet0/1.100 | include 30 second offered rate
+      30 second offered rate 0 bps, drop rate 0 bps
+          30 second offered rate 0 bps, drop rate 0 bps
+          30 second offered rate 0 bps, drop rate 0 bps
+      30 second offered rate 0 bps, drop rate 0 bps
+          30 second offered rate 0 bps, drop rate 0 bps
+          30 second offered rate 0 bps, drop rate 0 bps
+
+
