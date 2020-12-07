@@ -22,6 +22,7 @@ getQOSButton.addEventListener('click', function () {
     getQOSLabel.innerText = "Stop QOS"
   } else {
     console.log("Stop QOS")
+    socket.emit("stopQOS");
     getQOSLabel.innerText = "Start QOS"
   }
 })

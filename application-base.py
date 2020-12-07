@@ -13,6 +13,7 @@ class QOSThread:
         self.interface = interface.encode()
         self.password = password.encode()
         self.telnet = telnetlib.Telnet(hostip)
+        self.isRun = True
 
         # Send varialbles
         self.input_policy = ""
@@ -112,7 +113,7 @@ class QOSThread:
         self.getClassMaps()
 
     def run(self):
-
+        self.isRun = True
         self.begin()
         print("Input Policy:")
         print(self.input_policy)
@@ -134,8 +135,11 @@ class QOSThread:
                 "policy_classes": self.policy_classes,
             },
         )
-        while True:
+        while self.isRun:
             self.getQos()
+
+    def stop(self):
+        self.isRun = False
 
 
 @socketio.on("getQOS")
