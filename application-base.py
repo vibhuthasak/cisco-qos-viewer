@@ -123,10 +123,11 @@ class QOSThread:
         emit("qos_status", {"qos_values": offer_rate_list})
         self.qosCount += 1
         print(f"qos count {self.qosCount}")
-        socketio.sleep(8)
+        self.telnet.read_until(b"#", timeout=3)
         if self.checkDataBCtraffic(offer_rate_list):
-            self.increaseBandWidth()
             self.stop()
+            self.increaseBandWidth()
+        socketio.sleep(8)
 
     def increaseBandWidth(self):
         emit("notification", {"description": "Increasing Bandwidth process started"})
@@ -142,12 +143,12 @@ class QOSThread:
         unzipClassList = list(zip(*self.policy_classes))
 
         indexofDataBCClass = list(unzipClassList[0]).index("DATA_BC")
-        dataBCmaxBandwidth = list(unzipClassList[1])[indexofDataBCClass]
-        currentOfferRate = offerRate[indexofDataBCClass][1]
+        dataBCmaxBandwidth = int(list(unzipClassList[1])[indexofDataBCClass])
+        currentOfferRate = int(offerRate[indexofDataBCClass][1])
         print(f"DATA_BC Bandwidth - {currentOfferRate}, Max - {dataBCmaxBandwidth}")
         bandwidthlimit = 60
 
-        if dataBCmaxBandwidth * (60 / 100) < currentOfferRate:
+        if dataBCmaxBandwidth * (bandwidthlimit / 100) < currentOfferRate:
             print("exceeded")
             emit(
                 "notification",
@@ -155,6 +156,7 @@ class QOSThread:
             )
             return True
         else:
+            print("not exceeded")
             return False
 
     def begin(self):
