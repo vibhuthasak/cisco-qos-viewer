@@ -238,12 +238,9 @@ def generateBandwidthIncreaseText(oldInputPolicy, oldOutputPolicy, interfaceName
     newBandwidth = oldBandwidth + 1
     newInputPolicy = substituteCharFromList(oldInputPolicy, 0, str(newBandwidth))
     newOutputPolicy = substituteCharFromList(oldOutputPolicy, 0, str(newBandwidth))
-    emit(
-        "notification",
-        {
-            "description": f"Changing bandwidth to {newInputPolicy} from {oldInputPolicy}"
-        },
-    )
+    emit("notification", {"description": f"Changing bandwidth to"})
+    emit("notification", {"description": f"{newInputPolicy}"})
+    emit("notification", {"description": f"from {oldInputPolicy}"})
     newConfiguration = f"""
 end \n
 configure terminal \n
