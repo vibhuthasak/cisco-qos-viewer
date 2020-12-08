@@ -14,6 +14,7 @@ class QOSThread:
         self.password = password.encode()
         self.telnet = telnetlib.Telnet(hostip)
         self.isRun = True
+        self.qosCount = 0
 
         # Send varialbles
         self.input_policy = ""
@@ -104,6 +105,9 @@ class QOSThread:
         self.policy_classes = policies_with_police
 
     def getQos(self):
+        if self.qosCount == 6:
+            self.stop()
+            self.increaseBandWidth()
         self.telnet.read_until(b"#", timeout=1)
         self.telnet.write(
             b"sh policy-map interface "
@@ -119,6 +123,8 @@ class QOSThread:
                 offer_rate_list.append(offerrate)
         print(offer_rate_list)
         emit("qos_status", {"qos_values": offer_rate_list})
+        self.qosCount += 1
+        print(f"qos count {self.qosCount}")
         socketio.sleep(8)
 
     def increaseBandWidth(self):
@@ -165,10 +171,11 @@ class QOSThread:
             if self.isRun:
                 self.getQos()
             else:
-                print("Stopping QOS")
+                emit("notification", {"description": "QOS Stopped"})
                 break
 
     def stop(self):
+        emit("notification", {"description": "Stopping QOS"})
         self.isRun = False
 
 
