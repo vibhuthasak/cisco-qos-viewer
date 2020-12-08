@@ -97,10 +97,11 @@ class QOSThread:
         police_list = []
         for line in police_rates.splitlines():
             if "rate" in line:
-                secondElement = line.strip().split()[2]
+                secondElement = line.strip().split()[1]
                 police_list.append(secondElement)
         policies_with_police = list(zip(self.policy_classes, police_list)) * 2
         print(policies_with_police)
+        self.policy_classes = policies_with_police
 
     def getQos(self):
         self.telnet.read_until(b"#", timeout=1)
@@ -125,6 +126,7 @@ class QOSThread:
         self.getServicePolicies()
         self.getChildPolicies()
         self.getClassMaps()
+        self.getBandwidthPercentage()
 
     def run(self):
         self.isRun = True
@@ -149,8 +151,12 @@ class QOSThread:
                 "policy_classes": self.policy_classes,
             },
         )
-        while self.isRun:
-            self.getQos()
+        while True:
+            if self.isRun:
+                self.getQos()
+            else:
+                print("Stopping QOS")
+                break
 
     def stop(self):
         self.isRun = False

@@ -51,8 +51,10 @@ socket.on("qos_status", function (msg) {
 function updateChart(chartObjectIndex, dataset) {
   let chartObject = Chart.instances[chartObjectIndex]
   console.log(chartObject)
+  let maxBandwidth = chartObject.data.datasets[2].data[0]
   chartObject.data.datasets[0].data.push(dataset[0]);
   chartObject.data.datasets[1].data.push(dataset[1]);
+  chartObject.data.datasets[2].data.push(maxBandwidth);
   chartObject.data.labels = [...Array(chartObject.data.datasets[0].data.length).keys()]
   chartObject.update();
 }
@@ -111,7 +113,7 @@ socket.on("qos_info", function (msg) {
         label: "Max",
         borderColor: 'rgb(0, 0, 255)',
         fill: false,
-        data: [maxBandWidth],
+        data: [maxBandWidth == 0 ? 0 : maxBandWidth / 1000],
       }]
     }
     let chartOptions = {
