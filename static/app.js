@@ -62,8 +62,8 @@ socket.on("qos_info", function (msg) {
   console.log(msg)
   let policyClasses = msg["policy_classes"]
   let middleValue = policyClasses.length / 2
-  policyClasses[0] = "Total Traffic"
-  policyClasses[middleValue] = "Total Traffic"
+  policyClasses[0][0] = "Total Traffic"
+  policyClasses[middleValue][0] = "Total Traffic"
 
   let inputPolicy = msg["input-policy"]
   let inputChildPolicy = msg["input_child_policies"][0]
@@ -94,11 +94,12 @@ socket.on("qos_info", function (msg) {
   chartGrid.innerHTML += joined
   for (let i = 0; i < policyClasses.length; i++) {
     let getChartElementForPolicy = document.getElementById(`chartIndex_${i}`)
+    let maxBandWidth = policyClasses[i][1]
     let chartData = {
       labels: [],
       datasets: [{
         label: "Matched",
-        borderColor: 'rgb(0, 0, 255)',
+        borderColor: 'rgb(0, 255, 0)',
         fill: false,
         data: [],
       }, {
@@ -106,6 +107,11 @@ socket.on("qos_info", function (msg) {
         borderColor: 'rgb(255, 0, 0)',
         fill: false,
         data: [],
+      }, {
+        label: "Max",
+        borderColor: 'rgb(0, 0, 255)',
+        fill: false,
+        data: [maxBandWidth],
       }]
     }
     let chartOptions = {
@@ -147,7 +153,7 @@ socket.on("qos_info", function (msg) {
     });
 
     // Adding title for the chart
-    Chart.instances[i].options.title.text = policyClasses[i]
+    Chart.instances[i].options.title.text = policyClasses[i][0]
   }
 })
 
