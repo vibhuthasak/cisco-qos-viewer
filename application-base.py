@@ -105,9 +105,8 @@ class QOSThread:
         self.policy_classes = policies_with_police
 
     def getQos(self):
-        if self.qosCount == 3:
+        if self.qosCount == 10:
             self.stop()
-            self.increaseBandWidth()
         self.telnet.read_until(b"#", timeout=1)
         self.telnet.write(
             b"sh policy-map interface "
@@ -125,6 +124,7 @@ class QOSThread:
         emit("qos_status", {"qos_values": offer_rate_list})
         self.qosCount += 1
         print(f"qos count {self.qosCount}")
+        self.checkDataBCtraffic(offer_rate_list)
         socketio.sleep(8)
 
     def increaseBandWidth(self):
@@ -136,6 +136,14 @@ class QOSThread:
         self.telnet.write(configurationText.encode())
         self.telnet.read_until(b"#", timeout=3)
         emit("notification", {"description": "Bandwidth increase process finished"})
+
+    def checkDataBCtraffic(self, offerRate):
+        unzipClassList = zip(*self.policy_classes)
+        indexofDataBCClass = list(unzipClassList[0]).index("DATA_BC")
+        dataBCmaxBandwidth = list(unzipClassList[1])[indexofDataBCClass]
+        print(
+            f"DATA_BC Bandwidth - {offerRate[indexofDataBCClass][1]}, Max - {dataBCmaxBandwidth}"
+        )
 
     def begin(self):
         self.loginToRouterAndEnable()
