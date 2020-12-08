@@ -121,6 +121,14 @@ class QOSThread:
         emit("qos_status", {"qos_values": offer_rate_list})
         socketio.sleep(8)
 
+    def increaseBandWidth(self):
+        emit("notification", {"description": "Increasing Bandwidth process started"})
+        self.telnet.read_until(b"#", timeout=3)
+        configurationText = generateBandwidthIncreaseText(
+            self.input_policy, self.output_policy, self.interface
+        )
+        self.telnet.write(configurationText.encode)
+
     def begin(self):
         self.loginToRouterAndEnable()
         self.getServicePolicies()
@@ -131,6 +139,7 @@ class QOSThread:
     def run(self):
         self.isRun = True
         self.begin()
+        emit("notification", {"description": "Getting Service Policies"})
         print("Input Policy:")
         print(self.input_policy)
         print("Output Policy:")
@@ -151,6 +160,7 @@ class QOSThread:
                 "policy_classes": self.policy_classes,
             },
         )
+        emit("notification", {"description": "Generating QOS"})
         while True:
             if self.isRun:
                 self.getQos()
@@ -187,6 +197,7 @@ def main(msg):
 def connect():
     print(f"Client Connected {request.sid}")
     emit("connect_response", {"Status": 200})
+    emit("notification", {"description": "Connected to server"})
 
 
 @socketio.on("disconnect")
@@ -211,6 +222,30 @@ def matchLists(list1, list2):
     for _ in range(lengthList1 // 2 - lengthList2):
         list2.append("0")
     return list2
+
+
+def generateBandwidthIncreaseText(oldInputPolicy, oldOutputPolicy, interfaceName):
+    oldBandwidth = int(oldInputPolicy[0])
+    newBandwidth = oldBandwidth + 1
+    newInputPolicy = substituteCharFromList(oldInputPolicy, 0, newBandwidth)
+    newOutputPolicy = substituteCharFromList(oldOutputPolicy, 0, newBandwidth)
+    newConfiguration = f"""
+end \n
+configure terminal \n
+interface {interfaceName} \n
+no service-policy input {oldInputPolicy} \n
+no service-policy output {oldOutputPolicy} \n
+service-policy input {newInputPolicy} \n
+service-policy output {newOutputPolicy} \n
+end \n"""
+    print(newConfiguration)
+    return newConfiguration
+
+
+def substituteCharFromList(string, index, subChar):
+    stringList = list(string)
+    stringList[index] = subChar
+    return "".join(stringList)
 
 
 if __name__ == "__main__":
