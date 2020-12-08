@@ -15,6 +15,13 @@ body {
 
 .control-container {
   margin: 2rem;
+  flex: 3 1 auto;
+}
+
+.information-container {
+  margin: 2rem;
+  flex: 1 1 auto;
+  padding-top: 1rem;
 }
 
 .chart-container {
@@ -25,9 +32,10 @@ body {
   display: flex;
 }
 
-h2 {
+.main-header {
   color: #000000;
   font-size: 3rem;
+  margin: 2rem;
 }
 
 input[type="checkbox"] {
@@ -60,8 +68,11 @@ input[type="checkbox"] {
   background-color: rgb(213, 44, 44);
 }
 
+.main-container {
+  display: flex;
+}
+
 form {
-  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   width: 25%;
@@ -73,4 +84,9 @@ form label {
 
 form input {
   font-size: 2rem;
+}
+
+.notification-msg {
+  margin-left: 2rem;
+  color: #0010ff;
 }

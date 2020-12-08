@@ -5,6 +5,7 @@ const charts = []
 const getQOSButton = document.querySelector("#getQos")
 const getQOSLabel = document.querySelector("#getQosLabel")
 const chartGrid = document.querySelector("#chart-grid")
+const informationContainer = document.querySelector(".information-container")
 
 const interfaceName = document.querySelector("#iname")
 const interfaceIp = document.querySelector("#iip")
@@ -162,3 +163,14 @@ socket.on("qos_info", function (msg) {
 socket.on("error_info", function (msg) {
   alert(msg["description"])
 })
+
+socket.on("notification", function (msg) {
+  informationContainer.appendChild(createNotificationNodeFromHtml((msg["description"])))
+})
+
+function createNotificationNodeFromHtml(innerText) {
+  let h3 = document.createElement("h3");
+  h3.innerText = innerText;
+  h3.classList.add("notification-msg")
+  return h3
+}
