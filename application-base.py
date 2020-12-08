@@ -23,6 +23,7 @@ class QOSThread:
         self.input_child_policies = []
         self.output_child_policies = []
         self.policy_classes = []
+        self.policy_classes_zip
 
     def loginToRouterAndEnable(self):
         self.telnet.read_until(b"Password:")
@@ -100,7 +101,8 @@ class QOSThread:
             if "rate" in line:
                 secondElement = line.strip().split()[1]
                 police_list.append(secondElement)
-        policies_with_police = list(zip(self.policy_classes, police_list)) * 2
+        self.policy_classes_zip = zip(self.policy_classes, police_list)
+        policies_with_police = list(self.policy_classes_zip) * 2
         print(policies_with_police)
         self.policy_classes = policies_with_police
 
@@ -138,7 +140,7 @@ class QOSThread:
         emit("notification", {"description": "Bandwidth increase process finished"})
 
     def checkDataBCtraffic(self, offerRate):
-        unzipClassList = zip(*self.policy_classes)
+        unzipClassList = zip(*self.policy_classes_zip)
         indexofDataBCClass = list(unzipClassList[0]).index("DATA_BC")
         dataBCmaxBandwidth = list(unzipClassList[1])[indexofDataBCClass]
         print(
