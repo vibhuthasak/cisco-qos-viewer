@@ -134,6 +134,8 @@ class QOSThread:
             self.input_policy, self.output_policy, self.interface
         )
         self.telnet.write(configurationText.encode)
+        self.telnet.read_until(b"#", timeout=3)
+        emit("notification", {"description": "Bandwidth increase process finished"})
 
     def begin(self):
         self.loginToRouterAndEnable()
@@ -236,6 +238,7 @@ def generateBandwidthIncreaseText(oldInputPolicy, oldOutputPolicy, interfaceName
     newBandwidth = oldBandwidth + 1
     newInputPolicy = substituteCharFromList(oldInputPolicy, 0, newBandwidth)
     newOutputPolicy = substituteCharFromList(oldOutputPolicy, 0, newBandwidth)
+    emit("notification", {"description": f"Changing bandwidth to ${newInputPolicy} from ${oldInputPolicy}"})
     newConfiguration = f"""
 end \n
 configure terminal \n
