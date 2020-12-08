@@ -88,6 +88,20 @@ class QOSThread:
                 class_maps_list.append(secondElement)
         self.policy_classes = class_maps_list
 
+    def getBandwidthPercentage(self):
+        self.telnet.read_until(b"#", timeout=1)
+        self.telnet.write(
+            b"sh policy-map interface " + self.interface + b" | include burst" + b"\n"
+        )
+        police_rates = self.telnet.read_until(b"#").decode("utf-8")
+        police_list = []
+        for line in police_rates.splitlines():
+            if "rate" in line:
+                secondElement = line.strip().split()[2]
+                police_list.append(secondElement)
+        policies_with_police = list(zip(self.policy_classes, police_list)) * 2
+        print(policies_with_police)
+
     def getQos(self):
         self.telnet.read_until(b"#", timeout=1)
         self.telnet.write(
@@ -183,6 +197,14 @@ def testPath():
 @app.route("/")
 def hello():
     return render_template("index.html")
+
+
+def matchLists(list1, list2):
+    lengthList1 = len(list1)
+    lengthList2 = len(list2)
+    for _ in range(lengthList1 // 2 - lengthList2):
+        list2.append("0")
+    return list2
 
 
 if __name__ == "__main__":
