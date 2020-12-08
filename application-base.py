@@ -105,7 +105,7 @@ class QOSThread:
         self.policy_classes = policies_with_police
 
     def getQos(self):
-        if self.qosCount == 6:
+        if self.qosCount == 3:
             self.stop()
             self.increaseBandWidth()
         self.telnet.read_until(b"#", timeout=1)
@@ -131,9 +131,9 @@ class QOSThread:
         emit("notification", {"description": "Increasing Bandwidth process started"})
         self.telnet.read_until(b"#", timeout=3)
         configurationText = generateBandwidthIncreaseText(
-            self.input_policy, self.output_policy, self.interface
+            self.input_policy, self.output_policy, self.interface.decode("utf-8")
         )
-        self.telnet.write(configurationText.encode)
+        self.telnet.write(configurationText.encode())
         self.telnet.read_until(b"#", timeout=3)
         emit("notification", {"description": "Bandwidth increase process finished"})
 
@@ -236,9 +236,14 @@ def matchLists(list1, list2):
 def generateBandwidthIncreaseText(oldInputPolicy, oldOutputPolicy, interfaceName):
     oldBandwidth = int(oldInputPolicy[0])
     newBandwidth = oldBandwidth + 1
-    newInputPolicy = substituteCharFromList(oldInputPolicy, 0, newBandwidth)
-    newOutputPolicy = substituteCharFromList(oldOutputPolicy, 0, newBandwidth)
-    emit("notification", {"description": f"Changing bandwidth to ${newInputPolicy} from ${oldInputPolicy}"})
+    newInputPolicy = substituteCharFromList(oldInputPolicy, 0, str(newBandwidth))
+    newOutputPolicy = substituteCharFromList(oldOutputPolicy, 0, str(newBandwidth))
+    emit(
+        "notification",
+        {
+            "description": f"Changing bandwidth to {newInputPolicy} from {oldInputPolicy}"
+        },
+    )
     newConfiguration = f"""
 end \n
 configure terminal \n
