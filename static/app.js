@@ -4,6 +4,9 @@ const charts = []
 
 const getQOSButton = document.querySelector("#getQos")
 const getQOSLabel = document.querySelector("#getQosLabel")
+
+const bandwidthButton = document.querySelector("#allowBandWidth")
+
 const chartGrid = document.querySelector("#chart-grid")
 const informationContainer = document.querySelector(".information-container")
 
@@ -63,6 +66,7 @@ function updateChart(chartObjectIndex, dataset) {
 // QOS information listener
 socket.on("qos_info", function (msg) {
   console.log(msg)
+  chartGrid.innerHTML = ""
   let policyClasses = msg["policy_classes"]
   let middleValue = policyClasses.length / 2
   policyClasses[0][0] = "Total Traffic"

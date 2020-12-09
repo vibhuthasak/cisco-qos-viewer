@@ -38,7 +38,16 @@ body {
   margin: 2rem;
 }
 
-input[type="checkbox"] {
+.controls-2 {
+  margin-top: 2rem;
+}
+
+.controls-2 label {
+  margin-left: 1rem;
+  font-size: 1.5rem;
+}
+
+.controls input[type="checkbox"] {
   height: 0;
   width: 0;
   visibility: hidden;
@@ -75,7 +84,7 @@ input[type="checkbox"] {
 form {
   display: flex;
   flex-direction: column;
-  width: 25%;
+  width: 50%;
 }
 
 form label {
