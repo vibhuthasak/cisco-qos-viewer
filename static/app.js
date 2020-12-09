@@ -4,9 +4,7 @@ const charts = []
 
 const getQOSButton = document.querySelector("#getQos")
 const getQOSLabel = document.querySelector("#getQosLabel")
-
 const bandwidthButton = document.querySelector("#allowBandWidth")
-
 const chartGrid = document.querySelector("#chart-grid")
 const informationContainer = document.querySelector(".information-container")
 
@@ -15,10 +13,12 @@ const interfaceIp = document.querySelector("#iip")
 const interfacePwd = document.querySelector("#ipassword")
 
 getQOSButton.addEventListener('click', function () {
+  let allowBandwidth = bandwidthButton.checked
   let qosValues = {
     interfaceName: interfaceName.value,
     interfaceIp: interfaceIp.value,
-    interfacePwd: interfacePwd.value
+    interfacePwd: interfacePwd.value,
+    allowBandwidth: allowBandwidth
   }
   if (getQOSButton.checked) {
     chartGrid.innerHTML = ""

@@ -9,10 +9,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 class QOSThread:
-    def __init__(self, interface, password, hostip):
+    def __init__(self, interface, password, hostip, allowBandwidthExpand):
         self.interface = interface.encode()
         self.password = password.encode()
         self.telnet = telnetlib.Telnet(hostip)
+        self.allowBandwidth = allowBandwidthExpand
         self.isRun = True
         self.qosCount = 0
 
@@ -124,7 +125,7 @@ class QOSThread:
         self.qosCount += 1
         print(f"qos count {self.qosCount}")
         self.telnet.read_until(b"#", timeout=3)
-        if self.checkDataBCtraffic(offer_rate_list):
+        if self.checkDataBCtraffic(offer_rate_list) and self.allowBandwidth:
             self.stop()
             self.increaseBandWidth()
         socketio.sleep(8)
@@ -191,6 +192,14 @@ class QOSThread:
             },
         )
         emit("notification", {"description": "Generating QOS"})
+        emit(
+            "notification",
+            {
+                "description": "Auto Bandwidth Expand Allowed"
+                if self.allowBandwidth == True
+                else "Auto Bandwidth Expand Not Allowed"
+            },
+        )
         while True:
             if self.isRun:
                 self.getQos()
@@ -217,8 +226,11 @@ def main(msg):
             interfaceName = msg["interfaceName"]
             interfaceUserPwd = msg["interfacePwd"]
             interfaceIp = msg["interfaceIp"]
+            allowBandwidthExpand = msg["allowBandwidth"]
             print(interfaceName, interfaceUserPwd, interfaceIp)
-            thread = QOSThread(interfaceName, interfaceUserPwd, interfaceIp)
+            thread = QOSThread(
+                interfaceName, interfaceUserPwd, interfaceIp, allowBandwidthExpand
+            )
             thread.run()
         except:
             emit("error_info", {"status": 500, "description": sys.exc_info()[0]})
