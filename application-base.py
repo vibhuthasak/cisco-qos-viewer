@@ -139,6 +139,8 @@ class QOSThread:
         self.telnet.write(configurationText.encode())
         self.telnet.read_until(b"#", timeout=3)
         emit("notification", {"description": "Bandwidth increase process finished"})
+        emit("notification", {"description": "Restarting QOS"})
+        emit("restart_qos")
 
     def checkDataBCtraffic(self, offerRate):
         unzipClassList = list(zip(*self.policy_classes))

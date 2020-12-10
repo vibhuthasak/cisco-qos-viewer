@@ -31,6 +31,24 @@ getQOSButton.addEventListener('click', function () {
   }
 })
 
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+socket.on("restart_qos", function () {
+  let allowBandwidth = bandwidthButton.checked
+  let qosValues = {
+    interfaceName: interfaceName.value,
+    interfaceIp: interfaceIp.value,
+    interfacePwd: interfacePwd.value,
+    allowBandwidth: allowBandwidth
+  }
+  chartGrid.innerHTML = ""
+  await timeout(5000);
+  socket.emit("getQOS", qosValues);
+  getQOSLabel.innerText = "Stop QOS"
+})
+
 socket.on("test_response", function (msg) {
   console.log(msg);
 })
