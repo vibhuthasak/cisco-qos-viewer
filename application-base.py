@@ -205,6 +205,7 @@ class QOSThread:
                 self.getQos()
             else:
                 emit("notification", {"description": "QOS Stopped"})
+                self.telnet.close()
                 break
 
     def stop(self):
