@@ -35,7 +35,8 @@ function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-socket.on("restart_qos", function () {
+socket.on("restart_qos", async function () {
+  clearChartInstances()
   let allowBandwidth = bandwidthButton.checked
   let qosValues = {
     interfaceName: interfaceName.value,
@@ -43,7 +44,6 @@ socket.on("restart_qos", function () {
     interfacePwd: interfacePwd.value,
     allowBandwidth: allowBandwidth
   }
-  chartGrid.innerHTML = ""
   await timeout(5000);
   socket.emit("getQOS", qosValues);
   getQOSLabel.innerText = "Stop QOS"
@@ -56,6 +56,13 @@ socket.on("test_response", function (msg) {
 socket.on("connect_response", function (msg) {
   console.log(msg);
 })
+
+function clearChartInstances() {
+  let chartInstanceList = Object.values(Chart.instances)
+  chartInstanceList.forEach(chartInstance => {
+    chartInstance.destroy()
+  })
+}
 
 // QOS status listener
 socket.on("qos_status", function (msg) {
@@ -71,8 +78,7 @@ socket.on("qos_status", function (msg) {
 })
 
 function updateChart(chartObjectIndex, dataset) {
-  let chartObject = Chart.instances[chartObjectIndex]
-  console.log(chartObject)
+  let chartObject = Object.values(Chart.instances)[chartObjectIndex]
   let maxBandwidth = chartObject.data.datasets[2].data[0]
   chartObject.data.datasets[0].data.push(dataset[0]);
   chartObject.data.datasets[1].data.push(dataset[1]);
@@ -176,9 +182,9 @@ socket.on("qos_info", function (msg) {
       data: chartData,
       options: chartOptions
     });
-
+    console.log(Chart.instances)
     // Adding title for the chart
-    Chart.instances[i].options.title.text = policyClasses[i][0]
+    Object.values(Chart.instances)[i].options.title.text = policyClasses[i][0]
   }
 })
 
