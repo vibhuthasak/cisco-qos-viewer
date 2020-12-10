@@ -149,7 +149,7 @@ class QOSThread:
         dataBCmaxBandwidth = int(list(unzipClassList[1])[indexofDataBCClass])
         currentOfferRate = int(offerRate[indexofDataBCClass][1])
         print(f"DATA_BC Bandwidth - {currentOfferRate}, Max - {dataBCmaxBandwidth}")
-        bandwidthlimit = 60
+        bandwidthlimit = 75
 
         if dataBCmaxBandwidth * (bandwidthlimit / 100) < currentOfferRate:
             print("exceeded")
