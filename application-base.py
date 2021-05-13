@@ -1,7 +1,8 @@
+from os import system
 import telnetlib
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
-import sys
+import sys, platform, json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
@@ -243,7 +244,7 @@ def main(msg):
 def connect():
     print(f"Client Connected {request.sid}")
     emit("connect_response", {"Status": 200})
-    emit("notification", {"description": "Connected to server"})
+    emit("notification", {"description": "Connected to server to"})
 
 
 @socketio.on("disconnect")
@@ -259,7 +260,14 @@ def testPath():
 
 @app.route("/")
 def hello():
-    return render_template("index.html")
+    uname = platform.uname()
+    systemInfo = {
+        "system": uname.system,
+        "node": uname.node,
+        "version": uname.version,
+        "machine": uname.machine,
+    }
+    return render_template("index.html", data=json.dumps(systemInfo))
 
 
 def matchLists(list1, list2):
