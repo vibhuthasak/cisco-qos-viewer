@@ -8,7 +8,7 @@ pipeline {
         // }
         stage('Docker image build'){
             steps {
-                sh 'docker build -t cisco-ios-qos:1.0.2 .'
+                sh "docker build -t cisco-ios-qos:1.0.${BUILD_NUMBER} ."
             }
         }
         // stage('Deploy') {
