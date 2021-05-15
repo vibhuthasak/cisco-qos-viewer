@@ -8,7 +8,8 @@ pipeline {
             steps {
                 sh 'echo $TEST_VAR'
                 sh "echo ${TEST_VAR}"
-                sh "docker build -t cisco-ios-qos:1.0.${BUILD_NUMBER} ."
+                docker.build("cisco-ios-qos:1.0.${BUILD_NUMBER}")
+                // sh "docker build -t cisco-ios-qos:1.0.${BUILD_NUMBER} ."
             }
         }
     }
