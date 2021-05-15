@@ -6,10 +6,5 @@ pipeline {
                 sh "docker build -t cisco-ios-qos:1.0.${BUILD_NUMBER} ."
             }
         }
-        // stage('Deploy') {
-        //     steps {
-        //         sh 'make publish'
-        //     }
-        // }
     }
 }
